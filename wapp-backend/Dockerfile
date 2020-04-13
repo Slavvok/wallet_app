@@ -1,7 +1,12 @@
 FROM python:3.7
 ENV PYTHONUNBUFFERED 1
+#ENV DATABASE_NAME $DATABASE_NAME \
+#    DATABASE_USER $DATABASE_USER \
+#    DATABASE_PASSWORD $DATABASE_PASSWORD \
+#    DATABASE_HOST $DATABASE_HOST \
+#    DATABASE_PORT $DATABASE_PORT
 RUN mkdir /app
-WORKDIR /app
 COPY requirements.txt /app/
-RUN pip3 install -r requirements.txt
+WORKDIR /app
+RUN pip install -r requirements.txt
 COPY . /app/
