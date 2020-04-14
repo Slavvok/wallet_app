@@ -58,12 +58,11 @@ class WalletSerializer(serializers.ModelSerializer):
 
 
 class WalletTransactionsSerializer(serializers.ModelSerializer):
-    add_transactions = AddTransactionSerializer(many=True)
-    sub_transactions = SubtractTransactionSerializer(many=True)
+    transactions = TransactionSerializer(many=True)
 
     class Meta:
         model = Wallet
-        fields = ('name', 'value', 'add_transactions', 'sub_transactions')
+        fields = ('name', 'value', 'transactions', 'transactions')
 
 
 class UserSerializer(serializers.ModelSerializer):

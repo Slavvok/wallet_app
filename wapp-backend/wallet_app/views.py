@@ -14,11 +14,9 @@ class WalletViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def transactions(self, request, pk=None):
-        queryset = Wallet.objects.prefetch_related(
-            Prefetch('add_transactions', AddTransaction.objects.order_by('-date')),
-            Prefetch('sub_transactions', SubtractTransaction.objects.order_by('-date'))).filter(pk=pk).first()
-        if queryset:
-            serializer = WalletTransactionsSerializer(queryset)
+        queryset = Wallet.objects.filter(pk=pk)
+        if queryset.exists():
+            serializer = WalletTransactionsSerializer(queryset.first())
             return Response(serializer.data)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
