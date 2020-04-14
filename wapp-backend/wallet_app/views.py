@@ -4,7 +4,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import *
-from .serializers import WalletTransactionsSerializer, WalletSerializer, AddTransactionSerializer, SubtractTransactionSerializer
+from .serializers import TransactionSerializer, WalletTransactionsSerializer, WalletSerializer, AddTransactionSerializer, SubtractTransactionSerializer
 from django.db.models import Prefetch
 
 
@@ -26,10 +26,8 @@ class WalletViewSet(viewsets.ModelViewSet):
 
 class TransactionViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
-    serializer_class = AddTransactionSerializer
-    queryset = AddTransaction.objects.filter() \
-        .union(SubtractTransaction.objects.filter()) \
-        .order_by('-date')
+    serializer_class = TransactionSerializer
+    queryset = Transaction.objects.all()
 
 
 class AddTransactionViewSet(viewsets.ModelViewSet):

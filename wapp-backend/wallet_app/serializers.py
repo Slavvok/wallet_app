@@ -4,20 +4,9 @@ from .models import *
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-
-    # def create(self, validated_data):
-    #     transaction = self.Meta.model(
-    #         value=validated_data['value'],
-    #         commentary=validated_data['commentary'],
-    #         wallet_id=validated_data['wallet_id'])
-    #     wallet = validated_data['wallet_id']
-    #     transaction.save()
-    #     self.Meta.model.change_value(wallet)
-    #     return transaction
-
     class Meta:
-        fields = ('date', 'value', 'post_trans_value', 'commentary', 'id', 'wallet_id')
-        abstract = True
+        model = Transaction
+        fields = ('date', 'type', 'value', 'post_trans_value', 'commentary', 'id', 'wallet_id')
 
 
 class AddTransactionSerializer(TransactionSerializer):
@@ -31,12 +20,14 @@ class AddTransactionSerializer(TransactionSerializer):
         wallet.value += transaction.value
         wallet.save()
         transaction.post_trans_value = wallet.value
+        transaction.set_type()
         transaction.save()
         return transaction
 
     class Meta:
         model = AddTransaction
         fields = TransactionSerializer.Meta.fields
+        proxy = True
 
 
 class SubtractTransactionSerializer(TransactionSerializer):
@@ -50,12 +41,14 @@ class SubtractTransactionSerializer(TransactionSerializer):
         wallet.value -= transaction.value
         wallet.save()
         transaction.post_trans_value = wallet.value
+        transaction.set_type()
         transaction.save()
         return transaction
 
     class Meta:
         model = SubtractTransaction
         fields = TransactionSerializer.Meta.fields
+        proxy = True
 
 
 class WalletSerializer(serializers.ModelSerializer):
