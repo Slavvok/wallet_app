@@ -8,8 +8,8 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ('date', 'type', 'value', 'post_trans_value', 'commentary', 'id', 'wallet_id')
 
-
-class AddTransactionSerializer(TransactionSerializer):
+    def _operation(self, wallet_value, trans_value):
+        return wallet_value
 
     def create(self, validated_data):
         transaction = self.Meta.model(
@@ -17,38 +17,35 @@ class AddTransactionSerializer(TransactionSerializer):
                 commentary=validated_data['commentary'],
                 wallet_id=validated_data['wallet_id'])
         wallet = validated_data['wallet_id']
-        wallet.value += transaction.value
-        wallet.save()
+        wallet.value = self._operation(wallet.value, transaction.value)
         transaction.post_trans_value = wallet.value
         transaction.set_type()
         transaction.save()
+        wallet.save()
         return transaction
+
+    class Meta:
+        model = Transaction
+        allow_null = True
+        fields = ('date', 'type', 'value', 'post_trans_value', 'commentary', 'id', 'wallet_id')
+
+
+class AddTransactionSerializer(TransactionSerializer):
+    def _operation(self, wallet_value, trans_value):
+        return wallet_value + trans_value
 
     class Meta:
         model = AddTransaction
         fields = TransactionSerializer.Meta.fields
-        proxy = True
 
 
 class SubtractTransactionSerializer(TransactionSerializer):
-
-    def create(self, validated_data):
-        transaction = self.Meta.model(
-                value=validated_data['value'],
-                commentary=validated_data['commentary'],
-                wallet_id=validated_data['wallet_id'])
-        wallet = validated_data['wallet_id']
-        wallet.value -= transaction.value
-        wallet.save()
-        transaction.post_trans_value = wallet.value
-        transaction.set_type()
-        transaction.save()
-        return transaction
+    def _operation(self, wallet_value, trans_value):
+        return wallet_value - trans_value
 
     class Meta:
         model = SubtractTransaction
         fields = TransactionSerializer.Meta.fields
-        proxy = True
 
 
 class WalletSerializer(serializers.ModelSerializer):
