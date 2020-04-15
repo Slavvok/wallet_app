@@ -4,7 +4,7 @@ from .views import SubTransactionViewSet, AddTransactionViewSet, WalletViewSet, 
 
 router = routers.DefaultRouter()
 router.register('wallets', WalletViewSet)
-router.register('transactions-list', TransactionViewSet, basename=True)
+router.register('transactions', TransactionViewSet)
 router.register('add-transaction', AddTransactionViewSet)
 router.register('sub-transaction', SubTransactionViewSet)
 

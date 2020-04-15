@@ -4,23 +4,10 @@ from .models import *
 
 
 class TransactionSerializer(serializers.ModelSerializer):
+    commentary = serializers.CharField(allow_blank=True, allow_null=True)
 
-    # def create(self, validated_data):
-    #     transaction = self.Meta.model(
-    #         value=validated_data['value'],
-    #         commentary=validated_data['commentary'],
-    #         wallet_id=validated_data['wallet_id'])
-    #     wallet = validated_data['wallet_id']
-    #     transaction.save()
-    #     self.Meta.model.change_value(wallet)
-    #     return transaction
-
-    class Meta:
-        fields = ('date', 'value', 'post_trans_value', 'commentary', 'id', 'wallet_id')
-        abstract = True
-
-
-class AddTransactionSerializer(TransactionSerializer):
+    def _operation(self, wallet_value, trans_value):
+        return wallet_value
 
     def create(self, validated_data):
         transaction = self.Meta.model(
@@ -28,11 +15,22 @@ class AddTransactionSerializer(TransactionSerializer):
                 commentary=validated_data['commentary'],
                 wallet_id=validated_data['wallet_id'])
         wallet = validated_data['wallet_id']
-        wallet.value += transaction.value
-        wallet.save()
+        wallet.value = self._operation(wallet.value, transaction.value)
         transaction.post_trans_value = wallet.value
+        transaction.set_type()
         transaction.save()
+        wallet.save()
         return transaction
+
+    class Meta:
+        model = Transaction
+        allow_null = True
+        fields = ('date', 'type', 'value', 'post_trans_value', 'commentary', 'id', 'wallet_id')
+
+
+class AddTransactionSerializer(TransactionSerializer):
+    def _operation(self, wallet_value, trans_value):
+        return wallet_value + trans_value
 
     class Meta:
         model = AddTransaction
@@ -40,18 +38,8 @@ class AddTransactionSerializer(TransactionSerializer):
 
 
 class SubtractTransactionSerializer(TransactionSerializer):
-
-    def create(self, validated_data):
-        transaction = self.Meta.model(
-                value=validated_data['value'],
-                commentary=validated_data['commentary'],
-                wallet_id=validated_data['wallet_id'])
-        wallet = validated_data['wallet_id']
-        wallet.value -= transaction.value
-        wallet.save()
-        transaction.post_trans_value = wallet.value
-        transaction.save()
-        return transaction
+    def _operation(self, wallet_value, trans_value):
+        return wallet_value - trans_value
 
     class Meta:
         model = SubtractTransaction
@@ -65,12 +53,11 @@ class WalletSerializer(serializers.ModelSerializer):
 
 
 class WalletTransactionsSerializer(serializers.ModelSerializer):
-    add_transactions = AddTransactionSerializer(many=True)
-    sub_transactions = SubtractTransactionSerializer(many=True)
+    transactions = TransactionSerializer(many=True)
 
     class Meta:
         model = Wallet
-        fields = ('name', 'value', 'add_transactions', 'sub_transactions')
+        fields = ('name', 'value', 'transactions', 'transactions')
 
 
 class UserSerializer(serializers.ModelSerializer):

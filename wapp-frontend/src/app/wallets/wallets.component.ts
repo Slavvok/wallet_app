@@ -33,7 +33,8 @@ export class WalletsComponent implements OnInit {
 
   createWallet() {
     this.walletService.createWallet(this.new_wallet).subscribe(
-      data => (console.log(data))
+      data => {console.log(data),
+      this.wallets.push(data)}
     )
   }
 
@@ -41,6 +42,8 @@ export class WalletsComponent implements OnInit {
     this.walletService.removeWallet(this.removeId).subscribe(
       data => {
         console.log(data);
+        var id = this.wallets.map(function(item) {return item.id}).indexOf(this.removeId);
+        this.wallets.splice(id, 1);
         this.closeModal();
       }
     )
