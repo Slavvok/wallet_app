@@ -4,9 +4,7 @@ from .models import *
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Transaction
-        fields = ('date', 'type', 'value', 'post_trans_value', 'commentary', 'id', 'wallet_id')
+    commentary = serializers.CharField(allow_blank=True, allow_null=True)
 
     def _operation(self, wallet_value, trans_value):
         return wallet_value
