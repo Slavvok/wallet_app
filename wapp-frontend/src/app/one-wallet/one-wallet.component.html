@@ -4,11 +4,15 @@
 </div>
 
 <div class="card card-body" *ngIf="isDetail">
-  <div *ngFor="let add of wallet.add_transactions" style="color: green">
-    {{ add.date }} {{ add.value }}
-  </div>
-  <div *ngFor="let sub of wallet.sub_transactions" style="color: red">
-    {{ sub.date }} {{ sub.value }}
+  <div *ngFor="let tr of wallet.transactions" style="color: green">
+    <div [ngStyle]="{'color':tr.type === 'add' ? '#28a745' : '#dc3545' }">
+      <div class="row">
+            Тип: {{ tr.type }} Сумма перевода: {{ tr.value }} Значение после перевода:{{ tr.post_trans_value }}
+      </div>
+      <div class="row">
+            {{ tr.date }} {{ tr.commentary }}
+      </div>
+    </div>
   </div>
 </div>
 
@@ -23,6 +27,9 @@
 </div>
 
 <form *ngIf="isAdd || isSub" class="mt-3">
+  <h4><span class="badge" [ngStyle]="{'background-color':isAdd ? '#28a745' : '#dc3545' }" >
+    Транзакция
+  </span></h4>
   <div class="form-group">
     <label for="value">Сумма</label>
     <input id="value" class="form-control" name="value" [(ngModel)]="transaction.value" required/>
