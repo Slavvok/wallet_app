@@ -2,6 +2,10 @@ from django.db import models
 import uuid
 
 
+def generate_id():
+    return uuid.uuid4().hex
+
+
 class Wallet(models.Model):
     name = models.CharField('название', max_length=60)
     value = models.FloatField('сумма', max_length=10, editable=False, default=0)
@@ -20,7 +24,7 @@ class Transaction(models.Model):
                                   related_name='transactions', on_delete=models.CASCADE)
 
     id = models.CharField(primary_key=True,
-                          default=uuid.uuid4().hex, editable=False, max_length=64)
+                          default=generate_id, editable=False, max_length=64)
     type = models.CharField("тип транзакции", max_length=3, default='', editable=False)
     post_trans_value = models.FloatField('значение после транзакции', editable=False, default=None, null=True)
 
