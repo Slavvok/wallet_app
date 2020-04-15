@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClientModule, HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from './user.service';
+import { environment } from 'src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -10,39 +11,39 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class WalletAppService {
-  constructor(private http: HttpClient,
-              private userService: UserService,
-  ) { }
+  private url = environment.apiUrl;
+
+  constructor(private http: HttpClient) { }
 
   getOneWallet(id) {
-    return this.http.get<any>(this.userService.userUrl + `/wallets/${id}/`, httpOptions)
+    return this.http.get<any>(this.url + `/wallets/${id}/`, httpOptions)
   }
 
   getWallets() {
-    return this.http.get<any>(this.userService.userUrl + '/wallets', httpOptions)
+    return this.http.get<any>(this.url + '/wallets', httpOptions)
   }
 
   getWalletTransactions(id) {
-    return this.http.get<any>(this.userService.userUrl + `/wallets/${id}/transactions`, httpOptions)
+    return this.http.get<any>(this.url + `/wallets/${id}/transactions`, httpOptions)
   }
 
   createWallet(new_wallet) {
-    return this.http.post<any>(this.userService.userUrl + '/wallets/', new_wallet, httpOptions)
+    return this.http.post<any>(this.url + '/wallets/', new_wallet, httpOptions)
   }
 
   removeWallet(id) {
-    return this.http.delete<any>(this.userService.userUrl + `/wallets/${id}/`, httpOptions)
+    return this.http.delete<any>(this.url + `/wallets/${id}/`, httpOptions)
   }
 
   getTransactions() {
-    return this.http.get<any>(this.userService.userUrl + '/transactions-list', httpOptions)
+    return this.http.get<any>(this.url + '/transactions-list', httpOptions)
   }
 
   createAddTransaction(transaction) {
-    return this.http.post<any>(this.userService.userUrl + '/add-transaction/', transaction, httpOptions)
+    return this.http.post<any>(this.url + '/add-transaction/', transaction, httpOptions)
   }
 
   createSubTransaction(transaction) {
-    return this.http.post<any>(this.userService.userUrl + '/sub-transaction/', transaction, httpOptions)
+    return this.http.post<any>(this.url + '/sub-transaction/', transaction, httpOptions)
   }
 }

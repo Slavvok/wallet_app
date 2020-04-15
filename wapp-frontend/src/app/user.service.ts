@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { User } from './user';
+import { environment } from 'src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -17,7 +18,7 @@ const httpOptions = {
 
 export class UserService {
 
-  public userUrl = 'http://localhost:8000'
+  private userUrl = environment.apiUrl;
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
 
