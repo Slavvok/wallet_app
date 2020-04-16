@@ -20,6 +20,6 @@ from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('wallet_app.urls')),
-    path('api-token-auth/', obtain_jwt_token),
+    path('api-token-auth/', obtain_jwt_token, name='api_token_auth'),
     path('api-token-refresh/', refresh_jwt_token),
 ]
